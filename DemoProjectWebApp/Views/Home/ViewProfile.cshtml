@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "My Profile";
+    var name = Context.Session.GetString("Name") ?? "User Name";
+    var email = Context.Session.GetString("Email") ?? "user@email.com";
+    var role = Context.Session.GetString("Role") ?? "Employee";
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="p-4">
+    @* <div class="container mt-4"> *@
+    <div>
+
+        <!-- Profile Header -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body d-flex align-items-center">
+                <div class="me-4">
+                    <img src="https://ui-avatars.com/api/?name=@name&size=120&background=4f46e5&color=fff"
+                         class="rounded-circle shadow"
+                         alt="Profile Picture">
+                </div>
+                <div>
+                    <h4 class="mb-1">@name</h4>
+                    <span class="badge bg-primary">@role</span>
+                    <p class="text-muted mb-0 mt-2">@email</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="row g-4">
+
+            <!-- Personal Info -->
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-white fw-semibold">
+                        👤 Personal Information
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="text-muted small">Full Name</label>
+                            <div class="fw-semibold">@name</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small">Email</label>
+                            <div class="fw-semibold">@email</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small">Phone</label>
+                            <div class="fw-semibold">0300-1234567</div>
+                        </div>
+                        <div>
+                            <label class="text-muted small">CNIC</label>
+                            <div class="fw-semibold">35202-XXXXXXX-X</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Info -->
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-white fw-semibold">
+                        💼 Job Details
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="text-muted small">Department</label>
+                            <div class="fw-semibold">Information Technology</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small">Designation</label>
+                            <div class="fw-semibold">Software Engineer</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small">Joining Date</label>
+                            <div class="fw-semibold">01 Jan 2024</div>
+                        </div>
+                        <div>
+                            <label class="text-muted small">Status</label>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-end mt-4">
+            <a href="/Account/EditProfile" class="btn btn-outline-primary px-4">
+                ✏️ Edit Profile
+            </a>
+            <a href="/Home/Index" class="btn btn-secondary px-4 ms-2">
+                ⬅ Back
+            </a>
+        </div>
+
+    </div>
+</div>

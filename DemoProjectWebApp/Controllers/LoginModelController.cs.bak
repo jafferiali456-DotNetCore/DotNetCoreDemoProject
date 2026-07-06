@@ -1,0 +1,193 @@
+﻿using Kendo.Mvc.UI;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text.Json;
+using DemoProjectWebApp.DAO;
+using DemoProjectWebApp.Models;
+using Kendo.Mvc.Extensions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
+namespace DemoProjectWebApp.Controllers
+
+{
+	public class LoginModelController : Controller
+	{
+        public IConfiguration _configuration { get; }
+        public ClsAuthentication common = new ClsAuthentication();
+        //  private readonly IDataAccessService _dataAccessService;
+
+        public LoginModelController(IConfiguration configuration)//, IDataAccessService dataAccessService)
+        {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            //  _dataAccessService = dataAccessService;
+            
+        }
+        [HttpGet]
+        public IActionResult Login(string returnUrl = null)
+        {
+            TempData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login","LoginModel");
+
+        }
+
+
+
+
+        [HttpPost]
+        // [Authorize("Authorization")]
+        public async Task<ActionResult> Login(LoginRequest model)//, string returnUrl )
+        {
+            string returnUrl = TempData["ReturnUrl"]==null?"": TempData["ReturnUrl"].ToString();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    #region Jwt Token
+
+                    //string endpoint_token = _configuration.GetSection("GatewayDoctorAuthUrl").Value;
+
+                    //string token = await common.getAuthenticationToken(endpoint_token);
+
+                    #endregion
+
+                    #region Login
+
+                    //if (!string.IsNullOrEmpty(token))
+                    //{
+                    string endpoint = _configuration.GetSection("GatewayLoginUrl").Value;
+                    //   endpoint += "?spName=WyF_SP_Create_2_Repository";
+
+                   // var EmployeeCode = "PN000125";
+                    var response = await common.APIMethodPostReturnResponse(endpoint, "", model, "POST");
+                    var res = response.Content.ReadAsStringAsync();
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        if (res.Result.Equals("[]"))
+                        {
+                            // Empty response - invalid credentials
+                            ModelState.AddModelError(string.Empty, "Invalid username or password");
+                            return View(model);
+                        }
+                        else
+                        { 
+                        string resStr = res.Result.Replace("{}", "null");
+                             resStr = resStr.Replace("[", "");
+                            resStr = resStr.Replace("]", "");
+                            var obj = JsonConvert.DeserializeObject<LoginResponse>(resStr);
+                            // var singleItem = obj.FirstOrDefault();
+                            // var session = _httpContextAccessor.HttpContext.Session;
+                            
+                        HttpContext.Session.SetString("Name", obj.UserName);
+                        HttpContext.Session.SetString("UserID", obj.UserID.ToString().Trim().ToLower());
+                        HttpContext.Session.SetString("AD_UserID", obj.UserID.ToString().Trim().ToLower());
+                        HttpContext.Session.SetString("RoleID", obj.RoleID.ToString().Trim());
+                        HttpContext.Session.SetString("LoginID", model.LoginID);
+                        HttpContext.Session.SetString("EmployeeCode", obj.EmployeeCode.ToString().Trim());
+                            HttpContext.Session.SetString("RoleCode", obj.RoleCode.ToString().Trim());
+                            HttpContext.Session.SetString("MenuXml", GetXMLMenu());
+                            //to add menu
+                            ///System.Web.HttpContext.Current.Session["Menu"] = (new BusinessLogic.LogicClasses.clsUser()).getMenu(lDBID);
+                            ///
+                            if (!string.IsNullOrEmpty(returnUrl))
+                            {
+                                return LocalRedirect(returnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Home");
+                            }
+                           // return RedirectToAction("Index", "Home");
+                    }
+                    }
+                    else //return response.StatusCode + "|" + response.ReasonPhrase;
+                    {
+                        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        {
+                            ModelState.AddModelError(string.Empty, "Invalid credentials. Please try again.");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, $"Login failed. Error: {response.StatusCode}");
+                        }
+                        return View(model);
+                    }
+#endregion
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+		private string GetXMLMenu()
+		{
+            return "<Menus>  <Menu>    <MenuID>140</MenuID>    <Text>AA Bank Payment Voucher</Text>    <Description>AA Bank Payment Voucher</Description>    <Navigate>GL/BankPaymentVoucherList.aspx?CompID=04 </Navigate>    <ParentID>140</ParentID>  </Menu>  <Menu>    <MenuID>141</MenuID>    <Text>AA Bank Payment Voucher Post</Text>    <Description>AA Bank Payment Voucher Post</Description>    <Navigate>GL/BankPaymentVoucherPostList.aspx?CompID=04 </Navigate>    <ParentID>140</ParentID>  </Menu>  <Menu>    <MenuID>145</MenuID>    <Text>AA Bank Receipt Voucher Posted</Text>    <Description>AA Bank Receipt Voucher Posted</Description>    <Navigate>GL/BankReceiptVoucherPostedList.aspx?CompID=04 </Navigate>    <ParentID>141</ParentID>  </Menu>  <Menu>    <MenuID>162</MenuID>    <Text>AA Advance Posted List</Text>    <Description>AA Advance Posted List</Description>    <Navigate>AR/AdvancePostedList.aspx?CompID=01 </Navigate>    <ParentID>145</ParentID>  </Menu>  <Menu>    <MenuID>259</MenuID>    <Text>AP IPS Bill</Text>    <Description>AP IPS Bill</Description>    <Navigate>#</Navigate>    <ParentID>162</ParentID>  </Menu>  <Menu>    <MenuID>260</MenuID>    <Text>AP IPS Settlement </Text>    <Description>AP IPS Settlement </Description>    <Navigate>#</Navigate>    <ParentID>162</ParentID>  </Menu>  <Menu>    <MenuID>247</MenuID>    <Text>AP AAG  Bill Posted List</Text>    <Description>AP AAG  Bill Posted List</Description>    <Navigate>AP/InvoicePostedList.aspx?CompID=05 </Navigate>    <ParentID>245</ParentID>  </Menu>  <Menu>    <MenuID>245</MenuID>    <Text>AP AAG Bill</Text>    <Description>AP AAG Bill</Description>    <Navigate>AP/InvoiceList.aspx?CompID=05 </Navigate>    <ParentID>245</ParentID>  </Menu>  <Menu>    <MenuID>251</MenuID>    <Text>AP IPS  Bill</Text>    <Description>AP IPS  Bill</Description>    <Navigate>AP/InvoiceList.aspx?CompID=06 </Navigate>    <ParentID>247</ParentID>  </Menu>  <Menu>    <MenuID>323</MenuID>    <Text>Collection Analysis</Text>    <Navigate>CollectionAnalysisPivot.aspx</Navigate>    <ParentID>251</ParentID>  </Menu>  <Menu>    <MenuID>277</MenuID>    <Text>SHA Invoice Posted List</Text>    <Description>SHA Invoice Posted List</Description>    <Navigate>AR/InvoicePostedList.aspx?CompID=07 </Navigate>    <ParentID>259</ParentID>  </Menu>  <Menu>    <MenuID>280</MenuID>    <Text>SHA Invoice Settlement Posted List</Text>    <Description>SHA Invoice Settlement Posted List</Description>    <Navigate>AR/InvoiceSettlementPostedList.aspx?CompID=07 </Navigate>    <ParentID>260</ParentID>  </Menu>  <Menu>    <MenuID>296</MenuID>    <Text>SHA Bank Payment Voucher</Text>    <Description>SHA Bank Payment Voucher</Description>    <Navigate>GL/BankPaymentVoucherList.aspx?CompID=08</Navigate>    <ParentID>277</ParentID>  </Menu>  <Menu>    <MenuID>306</MenuID>    <Text>SHA Cash Receipt Voucher Post</Text>    <Description>SHA Cash Receipt Voucher Post</Description>    <Navigate>GL/CashReceiptVoucherPostList.aspx?CompID=08</Navigate>    <ParentID>280</ParentID>  </Menu>  <Menu>    <MenuID>309</MenuID>    <Text>AP SHA  Bill</Text>    <Description>AP SHA  Bill</Description>    <Navigate>#</Navigate>    <ParentID>296</ParentID>  </Menu>  <Menu>    <MenuID>347</MenuID>    <Text>AAD Advance Posted List</Text>    <Description>AAD Advance Posted List</Description>    <Navigate>AR/AdvancePostedList.aspx?CompID=09 </Navigate>    <ParentID>323</ParentID>  </Menu>  <Menu>    <MenuID>367</MenuID>    <Text>AAD Bank Payment Voucher Post</Text>    <Description>AAD Bank Payment Voucher Post</Description>    <Navigate>GL/BankPaymentVoucherPostList.aspx?CompID=10</Navigate>    <ParentID>347</ParentID>  </Menu></Menus>";
+		}
+
+		
+
+        //public async Task<ActionResult> GetActionValue(int id)
+        //{
+        //    ActionRequest wf = new ActionRequest();
+        //    try
+        //    {
+        //        string endpoint = _configuration.GetSection("GetActionId").Value + "/" + "Action?Id=" + 10;
+        //        using (var client = new HttpClient())
+        //        {
+        //            client.Timeout = TimeSpan.FromSeconds(30);
+        //            using (HttpResponseMessage res = await client.GetAsync(endpoint))
+        //            {
+        //                if (res.IsSuccessStatusCode)
+        //                {
+        //                    var data = await res.Content.ReadAsStringAsync();
+        //                    var obj = JsonConvert.DeserializeObject<List<ActionRequest>>(data);
+        //                    string jsonString = JsonConvert.SerializeObject(obj);
+        //                    HttpContext.Session.SetString("ActionValues", jsonString);
+        //                    return View(obj);
+        //                }
+        //                else
+        //                {
+        //                    ViewBag.ErrorMessage = "Error fetching data from the server";
+        //                    return View(wf);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError("Error on method: Edit(id) controller: IctChangeReqController" + "|| User ID" + HttpContext.Session.GetString("UserID") + " for requestID: " + " Exception is: ||" + ex.Message + " Trace: ||" + ex.StackTrace);
+        //    }
+        //    return View(wf);
+        //}
+
+
+
+
+    }
+    public class LoginRequest
+    {
+        public string LoginID { get; set; }
+        public string Password { get; set; }
+    }
+    public class LoginResponse
+    {
+        public string UserName { get; set; }
+        public string LoginID { get; set; }
+        public long RoleID { get; set; }
+        public long UserID { get; set; }
+        public string RoleCode { get; set; }
+        public string EmployeeCode { get; set; }
+    }
+   
+}

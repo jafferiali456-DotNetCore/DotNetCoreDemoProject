@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "Create Record";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+
+            <div class="card border-0 shadow-sm">
+
+                <!-- Header -->
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">🧾 Business Information</h5>
+                    <small class="text-muted">
+                        Fill the required details to create a new record
+                    </small>
+                </div>
+
+                <div class="card-body px-4 py-4">
+                    <form>
+
+                        <!-- SECTION : BASIC INFO -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-primary mb-3">
+                                Basic Details
+                            </h6>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Full Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="e.g. Muhammad Ali">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email"
+                                           class="form-control"
+                                           placeholder="example@company.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION : CONTACT & DEPT -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-primary mb-3">
+                                Contact & Department
+                            </h6>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="03xx-xxxxxxx">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Department <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select">
+                                        <option selected disabled>Select Department</option>
+                                        <option>IT</option>
+                                        <option>HR</option>
+                                        <option>Finance</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION : DESCRIPTION -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-primary mb-3">
+                                Description
+                            </h6>
+
+                            <textarea class="form-control"
+                                      rows="3"
+                                      placeholder="Provide a short business description..."></textarea>
+                            <small class="text-muted">
+                                This will help identify the record internally.
+                            </small>
+                        </div>
+
+                        <!-- SECTION : STATUS -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold text-primary mb-3">
+                                Status Information
+                            </h6>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select">
+                                        <option>Active</option>
+                                        <option>Inactive</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Effective Date</label>
+                                    <input type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FOOTER ACTIONS -->
+                        <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-4">
+                            <small class="text-muted">
+                                <span class="text-danger">*</span> Required fields
+                            </small>
+
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-light px-4">
+                                    Cancel
+                                </a>
+
+                                <button type="submit"
+                                        class="btn btn-primary px-4">
+                                    💾 Save Record
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

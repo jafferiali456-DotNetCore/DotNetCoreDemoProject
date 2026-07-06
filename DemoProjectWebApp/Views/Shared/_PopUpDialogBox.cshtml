@@ -1,0 +1,51 @@
+﻿@using Kendo.Mvc.UI
+@model dynamic
+
+@(Html.Kendo().Dialog()
+    .Name("accountCreatedDialog")
+    .Title($"{ViewBag.MainHeading}")
+    .Content($@"
+        <div style='padding: 10px 0; text-align: center;'>
+            <p style='margin-bottom: 15px;'>{ViewBag.DialogTitle}.</p>
+            <ul class='list-group' style='list-style: none; padding: 0; text-align: left;'>
+                <li>
+                    <strong>Created On:</strong> {DateTime.Now:dd-MMM-yyyy hh:mm tt}
+                </li>
+            </ul>
+        </div>
+    ")
+    .Width("450px")
+    .Modal(true)
+    .Visible(false)
+    .Actions(actions =>
+    {
+        actions.Add().Text("OK").Primary(true);
+    })
+)
+
+<script>
+    // $(document).ready(function () {
+    //     var showPopup = '@(ViewBag.ShowPopup?.ToString().ToLower())';
+
+    //     if (showPopup === 'true') {
+    //         $("#accountCreatedDialog").data("kendoDialog").open();
+    //     }
+    // });
+    $(document).ready(function () {
+
+        var showPopup = '@(ViewBag.ShowPopup?.ToString().ToLower() ?? "false")';
+
+        if (showPopup === 'true') {
+
+            var dialog = $("#accountCreatedDialog").data("kendoDialog");
+
+            if (dialog) {
+
+                dialog.open();
+
+                // 🔥 reset after open
+                showPopup = 'false';
+            }
+        }
+    });
+</script>

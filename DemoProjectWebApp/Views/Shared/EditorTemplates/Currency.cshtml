@@ -1,0 +1,8 @@
+@model decimal?
+@using Kendo.Mvc.UI
+@(Html.Kendo().CurrencyTextBoxFor(m => m)
+      .HtmlAttributes(new { style = "width:100%", title = Html.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName("")})
+      .Min(0)
+)
+
+

@@ -1,0 +1,166 @@
+﻿@using Kendo.Mvc.UI
+@model DemoProjectWebApp.Models.City
+@addTagHelper *, Kendo.Mvc
+
+@{
+    ViewData["Title"] = "City";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string mode = ViewBag.Mode?.ToString() ?? "Create";
+    string heading =
+        mode == "Edit" ? "Edit City" :
+        mode == "View" ? "View City" :
+        "Add City";
+
+    string buttonText = mode == "Edit" ? "Update" : "Save";
+    bool showButton = mode != "View";
+}
+@Html.Partial("_PopUpDialogBox")
+<div>   
+    <div class="row justify-content-center">
+        <div class="col-xl-30 col-lg-14">
+            <div class="card border-0 shadow-sm">
+
+                <!-- ================= HEADER ================= -->
+                <div class="card-header bg-white border-bottom">
+                    <h4 class="mb-1 fw-semibold d-flex align-items-center">
+                        <img src="~/images/icon/registration.png" width="36" class="me-2" />
+                        @heading
+                    </h4>
+                    <small class="text-muted">Fill the required details carefully</small>
+                </div>
+
+                <!-- ================= BODY ================= -->
+                <div class="card-body">
+                    <form method="post" asp-controller="City" asp-action="Index">
+                        @Html.AntiForgeryToken()
+
+                        <!-- ================= BASIC DETAILS ================= -->
+                        <div class="form-section-tight">
+
+                            <h4 class="fw-semibold text-primary mb-4">
+                                Basic Details
+                            </h4>
+
+                            <div class="row gx-2 gy-4 mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Code" class="form-label fw-semibold">Code</label>
+                                    <kendo-textbox for="Code" style="width:100%" clear-button="true"></kendo-textbox>
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Abbreviation" class="form-label fw-semibold">Abbreviation</label>
+                                    <kendo-textbox for="Abbreviation" style="width:100%" clear-button="true"></kendo-textbox>
+                                    <span asp-validation-for="Abbreviation" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row gx-2 gy-4 mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Name" class="form-label fw-semibold">Name</label>
+                                    <kendo-textbox for="Name" style="width:100%" clear-button="true"></kendo-textbox>
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- ================= HIDDEN FIELDS ================= -->
+                        @if (mode == "Edit" || mode == "View")
+                        {
+                            <input type="hidden" asp-for="Id" />
+                        }
+
+                        <input type="hidden" name="mode" value="@mode" />
+
+                        <!-- ================= FOOTER BUTTONS ================= -->
+                        @if (showButton)
+                        {
+                            <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-4">
+                                <small class="text-muted">
+                                    <span class="text-danger">*</span> Required fields
+                                </small>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button"
+                                            class="btn btn-light px-4"
+                                            onclick="history.back()">
+                                        Cancel
+                                    </button>
+                                    <button type="submit"
+                                            value="submit"
+                                            name="submitType"
+                                            onclick="handleSubmit(this)"
+                                            class="btn btn-primary px-4">
+                                        @buttonText
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= VIEW MODE SCRIPT ================= -->
+@if (mode == "View")
+{
+    <script>
+        document
+            .querySelectorAll('input, textarea, select, button')
+            .forEach(el => {
+                if (el.type !== "hidden") {
+                    el.setAttribute("disabled", true);
+                }
+            });
+    </script>
+}
+
+<!-- ================= PAGE CSS ================= -->
+<style>
+    /* Tight business spacing */
+    .form-section-tight {
+        margin-top: -10px;
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+
+        .form-section-tight .form-label {
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: #444;
+        }
+
+        .form-section-tight .k-textbox,
+        .form-section-tight .k-input {
+            margin-top: 2px;
+        }
+</style>
+
+<script>
+    function handleSubmit(button) {
+        // Show processing text + spinner
+        button.innerHTML = '<span class="k-icon k-i-loading"></span> Processing...';
+
+        // Disable all buttons
+        document.querySelectorAll("button[type='submit']").forEach(b => b.disabled = true);
+
+        // Add hidden input so value goes with form submit
+        const form = button.form;
+        let hidden = form.querySelector("input[name='submitType']");
+        if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "submitType";
+            form.appendChild(hidden);
+        }
+        hidden.value = button.value.trim();
+
+        // Submit form manually
+        setTimeout(() => form.submit(), 50);
+    }
+</script>

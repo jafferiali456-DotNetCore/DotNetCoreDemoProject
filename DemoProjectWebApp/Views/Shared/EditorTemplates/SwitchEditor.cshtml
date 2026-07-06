@@ -1,0 +1,8 @@
+﻿@using Kendo.Mvc.UI
+@model bool?
+
+@(Html.Kendo().Switch()
+    .Name(ViewData.TemplateInfo.GetFullHtmlFieldName(""))
+    .Checked(Model ?? false)
+    .Messages(m => m.Checked("On").Unchecked("Off"))
+)

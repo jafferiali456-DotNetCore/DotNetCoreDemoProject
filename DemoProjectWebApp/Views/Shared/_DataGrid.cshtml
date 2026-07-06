@@ -1,0 +1,42 @@
+﻿@model List<DynamicField>
+@using Kendo.Mvc.UI
+@using Microsoft.AspNetCore.Html
+@addTagHelper *, Kendo.Mvc
+
+<kendo-grid name="grid" height="430" resizable="true">
+    <datasource type="DataSourceTagHelperType.Ajax" server-operation="true">
+        <transport>
+            <read url="@Url.Action("GetData", "DynamicField")" />
+        </transport>
+    </datasource>
+
+    <columns>
+
+        <!-- Static buttons -->
+        <column template="
+            <a href='javascript:void(0)' onclick='openEdit(#=Id#)'>
+               <img src='/images/icon/pencil.png' style='width:18px;' />
+            </a>"
+            width="50" />
+
+        <column template="
+            <a href='javascript:void(0)' onclick='deleteRecord(#=Id#)'>
+               <img src='/images/icon/delete.png' style='width:18px;' />
+            </a>"
+            width="50" />
+
+        <!-- ✅ DYNAMIC COLUMNS FROM DATABASE -->
+        @foreach (var f in Model)
+        {
+                <column field="@f.ColumnName"
+                        title="@f.LabelName"
+                        width="150"
+                        header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                        html-attributes='new Dictionary<string,object> { ["style"] = "text-align: center" }' />
+        }
+    </columns>
+
+    <sortable enabled="true"></sortable>
+    <filterable enabled="true"></filterable>
+    <pageable enabled="true"></pageable>
+</kendo-grid>

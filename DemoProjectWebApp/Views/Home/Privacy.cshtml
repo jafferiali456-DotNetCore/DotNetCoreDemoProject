@@ -1,0 +1,82 @@
+﻿@addTagHelper *, Kendo.Mvc
+@using Kendo.Mvc.UI
+
+@{
+    ViewData["Title"] = "AttendanceList ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<kendo-scheduler name="scheduler"
+                 date="new DateTime(2025, 10, 4)"
+                 start-time="new DateTime(2025, 10, 4, 7, 00, 00)"
+                 end-time="new DateTime(2025, 10, 4, 20, 00, 00)"
+                 height="600"
+                 event-template-id="event-template">
+    <views>
+        <view type="day"></view>
+        <view type="week" selected="true"></view>
+        <view type="workWeek"></view>
+        <view type="month"></view>
+        <view type="agenda"></view>
+    </views>
+
+    <scheduler-datasource type="@DataSourceTagHelperType.Ajax">
+        <transport>
+            <read url="@Url.Action("Overview_Read", "Scheduler")" />
+            <create url="@Url.Action("Overview_Create", "Scheduler")" />
+            <destroy url="@Url.Action("Overview_Destroy", "Scheduler")" />
+            <update url="@Url.Action("Overview_Update", "Scheduler")" />
+        </transport>
+        <schema data="Data" total="Total" errors="Errors">
+            <scheduler-model id="ID">
+                <fields>
+                    <field name="ID" type="number"></field>
+                    <field name="title" from="Title" type="string" ></field>
+                    <field name="start" from="Start" type="date"></field>
+                    <field name="end" from="End" type="date"></field>
+                    <field name="description" from="Description" type="string"></field>
+                    <field name="recurrenceId" from="RecurrenceID" type="number" default-value=null></field>
+                    <field name="recurrenceRule" from="RecurrenceRule" type="string"></field>
+                    <field name="recurrenceException" from="RecurrenceException" type="string"></field>
+                    <field name="Attendee" type="number" default-value="1"></field>
+                    <field name="startTimezone" from="StartTimezone" type="string"></field>
+                    <field name="endTimezone" from="EndTimezone" type="string"></field>
+                    <field name="isAllDay" from="IsAllDay" type="boolean"></field>
+                </fields>
+            </scheduler-model>
+        </schema>
+    </scheduler-datasource>
+</kendo-scheduler>
+
+<style>
+    .template-container {
+        margin-top: -8px;
+    }
+
+        .template-container img {
+            float: left;
+            margin: 0 4px;
+            margin-right: 10px;
+        }
+
+        .template-container h3 {
+            padding: 0 4px 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 14px;
+        }
+
+    .template-title-1 {
+        color: #65CCFF;
+    }
+
+    .template-title-2 {
+        color: #D0D03B;
+    }
+
+    .k-event .k-i-reload,
+    .k-event .k-i-non-recurrence {
+        display: none;
+    }
+</style>

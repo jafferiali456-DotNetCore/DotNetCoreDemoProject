@@ -1,0 +1,74 @@
+﻿@using Kendo.Mvc.UI
+@{
+    string dialogId = ViewBag.DialogId ?? "autoDialog";
+    string title = ViewBag.Title ?? "Message";
+    string content = ViewBag.Content ?? "";
+    bool autoOpen = ViewBag.AutoOpen ?? false;
+    int width = ViewBag.Width ?? 420;
+
+    // optional: success | error | info
+    string type = ViewBag.Type ?? "info";
+    string iconClass = type == "success" ? "k-i-check-circle" :
+                       type == "error" ? "k-i-warning" :
+                       "k-i-information";
+}
+
+@if (!string.IsNullOrEmpty(content))
+{
+    @(Html.Kendo().Dialog()
+        .Name(dialogId)
+        .Title(title)
+        .Width(width)
+        .Modal(true)
+        .Visible(false)
+        .Content(
+            "<div class='dialog-body'>" +
+                "<span class='k-icon " + iconClass + " dialog-icon'></span>" +
+                "<div class='dialog-text'>" + content + "</div>" +
+            "</div>"
+        )
+        .Actions(actions =>
+        {
+            actions.Add().Text("OK").Primary(true).Action("onDialogOk");
+        })
+    )
+
+@if (autoOpen)
+    {
+        <script>
+            $(function () {
+                $("#@dialogId").data("kendoDialog").open();
+            });
+        </script>
+    }
+}
+
+<script>
+    function onDialogOk(e) {
+        e.sender.close();
+    }
+</script>
+<style>
+    .dialog-body {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 10px 0;
+    }
+
+    .dialog-icon {
+        font-size: 36px;
+        color: #0078d4; /* info default */
+    }
+
+    .k-dialog .k-primary {
+        min-width: 90px;
+        border-radius: 6px;
+    }
+
+    .dialog-text {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+</style>

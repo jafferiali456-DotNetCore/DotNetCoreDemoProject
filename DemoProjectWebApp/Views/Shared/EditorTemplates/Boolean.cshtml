@@ -1,0 +1,4 @@
+@using Kendo.Mvc.UI
+@model bool?
+
+@(Html.Kendo().CheckBoxFor(m => m).HtmlAttributes(new { title = Html.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName("")}))

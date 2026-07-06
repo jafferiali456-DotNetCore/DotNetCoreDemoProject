@@ -1,0 +1,243 @@
+﻿#main {
+    width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Main heading */
+.main-heading {
+    padding: 15px;
+    border-bottom: 2px solid #3a8e3d;
+    text-align: center;
+    background-color: #f1f1f1;
+}
+
+#First-Heading {
+    margin: 0;
+    font-size: 50px;
+}
+
+form {
+    padding: 20px;
+}
+/* Request Section */
+#requestion-section {
+    margin-bottom: 15px;
+}
+
+#request-label {
+    font-weight: bold;
+    margin-right: 10px;
+
+}
+
+#request-input {
+    width: calc(100%);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right:20px;
+    
+}
+
+/* Requester Details Section */
+-section {
+    margin-bottom: 20px;
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+#hero-heading {
+    display: flex;
+    justify-content: center;
+    background-color: green;
+    padding: 5px;
+    border: 1px solid;
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: white;
+}
+
+#hero-second {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 20px;
+}
+
+#third-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+#input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+#requested-type {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+
+#requested-type-label {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#requested-type-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#department {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#department-label {
+    font-weight: bold;
+    margin-left: 20px;
+    width: 150px;
+}
+
+#department-input {
+    flex: 1;
+    padding: 8px;
+    margin-left: -43px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+#hero-third {
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+}
+
+#curs-plus{
+    cursor: pointer;
+    margin-left: 40px;
+    font-size: 24px;
+    width: 20px;
+    height: 20px;
+    background-color: #3a8e3d;
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+#submit-id {
+    text-align: right;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    margin-top: 40px;
+}
+#submit-id-1 {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+#btn {
+    background-color: #3a8e3d;
+    color: #fff;
+    padding: 2px 80px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#select-0 {
+    margin-bottom: 20px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+#selected {
+    margin-bottom: 15px;
+    margin-top: 30px;
+    margin-left: 10px;
+    display: flex;
+    gap: 20px;
+}
+#selected-3 {
+    flex: 1;
+    height: 100px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+#btn-select {
+    flex: 1;
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+#btn-select-1 {
+    padding: 4px 50px;
+    border-radius: 10px;
+    margin-left: -200px;
+    background-color: whitesmoke;
+}
+#btn-id {
+    text-align: right;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    margin-top: 40px;
+}
+#btn-id-1 {
+    display:flex; justify-content:space-around; gap:10px;
+}
+#btn-id-2 {
+    background-color: #3a8e3d;
+    color: #fff;
+    padding: 2px 80px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#address-label {
+    font-weight: bold;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+#address-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 3px solid black;
+    padding: 8px;
+    border-radius: 4px;
+}
+#address-box-1 {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+}
+#charter-label {
+    font-weight: bold;
+    margin-left: 20px;
+    width: 150px;
+}
+#fixed {
+    margin-bottom: 15px; margin-left:10px; margin-top:-10px; display: flex; gap: 20px;
+}

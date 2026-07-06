@@ -1,0 +1,1040 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags-->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="au theme template">
+	<meta name="author" content="Hau Nguyen">
+	<meta name="keywords" content="au theme template">
+	<title>@ViewData["Title"] - Demo Project</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/style.css" />
+	<link rel="stylesheet" href="~/css/PayrollForm.css" />
+	@* <link rel="stylesheet" href="~/css/styles.css" /> *@
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" />
+	@* Add the Kendo Bootstrap theme: *@
+	@*<link href="https://kendo.cdn.telerik.com/2022.2.621/styles/kendo.material-main.min.css" rel="stylesheet" type="text/css" />*@
+	<link href="~/css/kendo.material-main.min.css" rel="stylesheet" type="text/css" />
+
+
+	<style>
+
+		.k-grid td,
+		.k-grid th {
+			border-right: 1px solid #ccc !important; /* vertical line between columns */
+		}
+
+		.text-danger-msg {
+			display: block;
+			min-height: 18px; /* Reserve space even when no error */
+			font-size: 13px;
+			color: red;
+			margin-bottom: -10px;
+			margin-top: 4px;
+		}
+
+
+		.error-overlay {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.4);
+			z-index: 9998;
+		}
+
+		/* Dialog container */
+		.error-dialog {
+			display: none;
+			position: fixed;
+			top: 30%;
+			left: 50%;
+			transform: translate(-50%, -30%);
+			background: #fff;
+			border: 1px solid #ccc;
+			border-radius: 10px;
+			padding: 20px;
+			width: 400px;
+			max-width: 90%;
+			box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+			z-index: 9999;
+			font-family: "Segoe UI", sans-serif;
+			animation: fadeIn 0.3s ease-in-out;
+		}
+
+		/* Title */
+		.error-dialog-title {
+			margin-top: 0;
+			color: #c0392b;
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		/* Message */
+		.error-dialog-message {
+			margin-top: 15px;
+			padding: 15px 0;
+			color: #2c3e50;
+			font-weight: 400;
+			font-size: 15px;
+			line-height: 1.4;
+		}
+
+		/* Button */
+		.error-dialog-btn {
+			background: #18407C;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			padding: 8px 16px;
+			cursor: pointer;
+			font-size: 14px;
+			transition: background 0.2s;
+		}
+
+			.error-dialog-btn:hover {
+				background: #a93226;
+			}
+
+		/* Smooth fade animation */
+		@@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translate(-50%, -40%);
+			}
+
+			to {
+				opacity: 1;
+				transform: translate(-50%, -30%);
+			}
+		}
+
+
+		.custom-dialog {
+			display: none;
+			position: fixed;
+			top: 30%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background: #fff;
+			border-radius: 10px;
+			padding: 20px;
+			width: 420px;
+			box-shadow: 0px 4px 20px rgba(0,0,0,0.25);
+			z-index: 9999;
+			text-align: center;
+			font-family: Arial, sans-serif;
+		}
+
+		.dialog-title {
+			display: flex;
+			margin-left: 10px;
+			font-size: 20px;
+			font-weight: 600;
+		}
+
+		.dialog-message {
+			margin: 15px 0;
+			color: #333;
+			font-size: 15px;
+		}
+
+		.dialog-codebox {
+			margin-top: 15px;
+			padding: 10px;
+			background: #f7f7f7;
+			border: 1px dashed #aaa;
+			border-radius: 5px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-family: monospace;
+		}
+
+		.copy-btn {
+			background: #007bff;
+			color: #fff;
+			border: none;
+			padding: 5px 10px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+			.copy-btn:hover {
+				background: #0056b3;
+			}
+
+		.dialog-btn {
+			margin-top: 15px;
+			padding: 6px 12px;
+			border: none;
+			background: #18407C;
+			color: #fff;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+			.dialog-btn:hover {
+				background: #222;
+			}
+
+	</style>
+	<style>
+
+		.k-grid td {
+			overflow: hidden; /* grid ka layout safe rahe */
+			position: relative;
+		}
+
+		.tooltip-wrapper {
+			position: relative;
+			display: inline-block;
+			width: 100%;
+			height: 100%;
+		}
+
+			.tooltip-wrapper .tooltip-text {
+				visibility: hidden;
+				position: fixed;
+				width: 100px;
+				background-color: #333;
+				color: #fff;
+				text-align: center;
+				border-radius: 4px;
+				padding: 4px 6px;
+				position: absolute;
+				z-index: 9999 !important;
+				bottom: 125%;
+				left: 50%;
+				transform: translateX(-50%);
+				opacity: 0;
+				transition: opacity 0.2s;
+				font-size: 12px;
+				white-space: nowrap;
+			}
+
+			.tooltip-wrapper:hover .tooltip-text {
+				visibility: visible;
+				opacity: 1;
+			}
+
+
+
+		/* Ensure all rows have the same styling */
+		.k-grid tr {
+			position: relative;
+		}
+
+		.k-grid .k-edit-cell input[type="text"] {
+			width: 100% !important;
+			min-width: 200px;
+			box-sizing: border-box;
+		}
+	</style>
+
+	<style>
+
+		#gridAdHocLocations td .k-input,
+		#gridAdHocLocations td input,
+		#gridAdHocLocations td select,
+		#gridAdHocLocations td .k-dropdown {
+			width: 100% !important;
+			box-sizing: border-box;
+		}
+
+		#gridAdHocLocations .k-edit-cell {
+			padding: 0 !important;
+		}
+
+		.k-window {
+			width: 500px !important;
+		}
+
+		.k-edit-form-container {
+			width: 850px;
+		}
+	</style>
+
+
+
+
+
+
+
+
+
+	<style>
+
+
+
+
+		.validation-list {
+			list-style: none;
+			padding-left: 0;
+		}
+
+		.validation-item {
+			margin-bottom: 12px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.validation-icon {
+			width: 24px;
+			height: 24px;
+			object-fit: contain;
+			display: block;
+		}
+
+		.disabled-style {
+			background-color: #C6D9EC; /* Grey background */
+			color: black; /* Grey text */
+			cursor: not-allowed; /* Cursor shows disabled */
+		}
+
+		.validation-header {
+			position: relative;
+			background: linear-gradient(90deg, #18407C, #1f5bb4);
+			color: white;
+			padding: 15px 20px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			transition: background 0.4s ease;
+		}
+
+		.validation-body {
+			padding: 20px;
+			background-color: #C6D9EC;
+			color: #333;
+			display: flex;
+			justify-content: space-around;
+			font-size: 16px;
+		}
+
+		.status-indicator {
+			font-weight: bold;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 16px;
+		}
+
+			.status-indicator img {
+				width: 22px;
+				height: 22px;
+			}
+
+		/* ✅ Green header */
+		.validation-header.success {
+			background: linear-gradient(90deg, #2e7d32, #4caf50);
+		}
+
+		/* ❌ Red header */
+		.validation-header.failed {
+			background: linear-gradient(90deg, #b71c1c, #e53935);
+		}
+
+
+		.text-danger-3 {
+			margin-left: 230px;
+			display: block;
+			color: #dc3545 !important;
+			margin-top: -15px;
+			min-height: 20px;
+			margin-bottom: -11px;
+		}
+
+
+
+		.display-column {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.viewmodeclose {
+			background-color: #18407C;
+			color: white;
+			border: none;
+			cursor: pointer;
+			font-size: 14px;
+			padding: 5px 10px;
+			border-radius: 5px;
+		}
+
+		.reuqest {
+			margin-bottom: 15px;
+		}
+
+		.new-head {
+			padding: 5px 15px;
+			width: auto;
+			color: white;
+			background-color: #18407C;
+			border-radius: 5px;
+			border-radius: 5px;
+			margin-bottom: 15px;
+		}
+
+			.new-head:hover {
+				background-color: green;
+				color: white;
+			}
+
+
+		.fields-box {
+			border: 2px solid black;
+		}
+
+
+		.k-filterable .k-header {
+			text-align: left !important;
+			margin-left: -10px;
+			background-color: #c6ecc6;
+		}
+
+		.k-grid-toolbar {
+			display: flex;
+			justify-content: flex-start; /* Align toolbar buttons (like search) to the left */
+		}
+
+		.k-grid-pager {
+			background-color: #c6ecc6;
+		}
+
+		/* Adjust the filter input box */
+		.k-filtercell .k-filterinput {
+			text-align: left !important; /* Align filter input to the left */
+			background-color: #c6ecc6;
+		}
+
+		/* Align the filter dropdowns */
+		.k-filtercell .k-dropdown {
+			text-align: left !important; /* Align filter dropdown to the left */
+			background-color: #c6ecc6;
+		}
+
+		/* Optional: Adjust the filter button position */
+		.k-grid-toolbar .k-button {
+			margin-right: 10px; /* Give some space between buttons if necessary */
+			background-color: #c6ecc6;
+		}
+
+
+
+		/* Optional: Add some padding if necessary */
+		.k-grid .k-filter-cell .k-filter-menu .k-textbox {
+			padding-right: 5px; /* Add padding to prevent any unwanted border */
+		}
+
+		.k-grid-toolbar .k-button {
+			background-color: #18407C; /* Your desired background color */
+			color: white; /* Your desired text color */
+			border: none; /* Optional: Remove border */
+		}
+
+			/* Change hover effect */
+			.k-grid-toolbar .k-button:hover {
+				background-color: #8dc63f; /* Hover background color */
+				color: white; /* Text color on hover */
+			}
+		/* Apply background color for even rows */
+
+		.k-grid tr:nth-child(even) {
+			/* background-color: green; */
+			color: black;
+		}
+
+		.k-button-md {
+			padding: 2px 8px;
+		}
+		/* Apply background color for odd rows */
+		.k-grid tr:nth-child(odd) {
+			background-color: #f0f2f5;
+		}
+
+		#first {
+			padding: 8px;
+		}
+
+		.k-grid tbody td {
+			padding: 8px;
+			line-height: 16px;
+		}
+
+
+		.k-grid tr td {
+			border: 1px solid darkgrey;
+			background-color: #ecf9ec;
+		}
+
+		.k-grid table tr:hover td {
+			background: #18407C !important;
+			cursor: pointer !important;
+			color: white;
+		}
+
+	</style>
+	<style>
+		#dynamic-menu {
+			padding-left: 10px;
+		}
+
+		.k-treeview .k-in {
+			font-size: 15px;
+			color: #333;
+		}
+
+		.k-treeview {
+			background-color: transparent;
+			border: none;
+		}
+	</style>
+	<style>
+		.has-sub > .js-arrow::after {
+			content: ' ▼';
+			float: right;
+			transition: transform 0.2s ease;
+		}
+
+		.has-sub.open > .js-arrow::after {
+			transform: rotate(-180deg);
+		}
+
+		.js-sub-list {
+			display: none;
+		}
+	</style>
+
+	@* Add the the jQuery script from the Telerik CDN: *@
+	<script src="~/custom/vendor/jquery/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.js"></script>
+
+	@*src="https://kendo.cdn.telerik.com/2022.2.621/js/jquery.min.js"*@
+	@*<script src="https://kendo.cdn.telerik.com/2022.2.621/js/kendo.all.min.js"></script>*@
+	<script src="~/js/kendo.all.min.js"></script>
+	@*<script src="https://kendo.cdn.telerik.com/2022.2.621/js/kendo.aspnetmvc.min.js"></script>*@
+	<script src="~/js/kendo.aspnetmvc.min.js"></script>
+	@*Telerik Stuff*@
+	@*<script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"></script>*@
+	<script src="~/js/jszip.min.js"></script>
+	<!-- Title Page-->
+	<!-- Fontfaces CSS-->
+	<link href="~/css/font-face.css" rel="stylesheet" media="all">
+	<link href="~/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+	<link href="~/vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+	<link href="~/vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+
+	<!-- Bootstrap CSS-->
+	<link href="~/vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
+
+	<!-- Vendor CSS-->
+	<link href="~/vendor/animsition/animsition.min.css" rel="stylesheet" media="all">
+	<link href="~/vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all">
+	<link href="~/vendor/wow/animate.css" rel="stylesheet" media="all">
+	<link href="~/vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all">
+	<link href="~/vendor/slick/slick.css" rel="stylesheet" media="all">
+	<link href="~/vendor/select2/select2.min.css" rel="stylesheet" media="all">
+	<link href="~/vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
+
+	<!-- Main CSS-->
+	<link href="~/css/theme.css" rel="stylesheet" media="all">
+
+</head>
+
+<body class="animsition">
+	<div class="page-wrapper">
+		<!-- HEADER MOBILE-->
+		<header class="header-mobile d-block d-lg-none">
+			<div class="header-mobile__bar">
+				<div class="container-fluid">
+					<div class="header-mobile-inner">
+						<a class="logo" href="index.html">
+							<img src="~/images/bg-title-01.jpg" alt="CoolAdmin" />
+						</a>
+						<button class="hamburger hamburger--slider" type="button">
+							<span class="hamburger-box">
+								<span class="hamburger-inner"></span>
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<nav class="navbar-mobile">
+				<div class="container-fluid">
+					@*<ul class="navbar-mobile__list list-unstyled">
+					<li class="has-sub">
+					<a class="js-arrow" href="#">
+					<i class="fas fa-tachometer-alt"></i>Dashboard
+					</a>
+					<ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+					<li>
+					<a class="nav-link " asp-controller="TravelRequest" asp-action="Index">Dashboard 1</a>
+					</li>
+					<li>
+					<a class="nav-link " asp-area="" asp-controller="TravelRequest" asp-action="Index">Travel</a>
+					</li>
+					<li>
+					<a href="index3.html">Dashboard 3</a>
+					</li>
+					<li>
+					<a href="index4.html">Dashboard 4</a>
+					</li>
+					</ul>
+					</li>
+					<li>
+					<a href="chart.html">
+					<i class="fas fa-chart-bar"></i>Charts
+					</a>
+					</li>
+					<li>
+					<a href="table.html">
+					<i class="fas fa-table"></i>Tables
+					</a>
+					</li>
+					<li>
+					<a href="form.html">
+					<i class="far fa-check-square"></i>Forms
+					</a>
+					</li>
+					<li>
+					<a href="calendar.html">
+					<i class="fas fa-calendar-alt"></i>Calendar
+					</a>
+					</li>
+					<li>
+					<a href="map.html">
+					<i class="fas fa-map-marker-alt"></i>Maps
+					</a>
+					</li>
+					<li class="has-sub">
+					<a class="js-arrow" href="#">
+					<i class="fas fa-copy"></i>Pages
+					</a>
+					<ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+					<li>
+					<a asp-controller="TravelRequest" asp-action="Edit">Login</a>
+					</li>
+					<li>
+					<a href="register.html">Register</a>
+					</li>
+					<li>
+					<a href="forget-pass.html">Forget Password</a>
+					</li>
+					</ul>
+					</li>
+					<li class="has-sub">
+					<a class="js-arrow" href="#">
+					<i class="fas fa-desktop"></i>UI Elements
+					</a>
+					<ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+					<li>
+					<a href="button.html">Button</a>
+					</li>
+					<li>
+					<a href="badge.html">Badges</a>
+					</li>
+					<li>
+					<a href="tab.html">Tabs</a>
+					</li>
+					<li>
+					<a href="card.html">Cards</a>
+					</li>
+					<li>
+					<a href="alert.html">Alerts</a>
+					</li>
+					<li>
+					<a href="progress-bar.html">Progress Bars</a>
+					</li>
+					<li>
+					<a href="modal.html">Modals</a>
+					</li>
+					<li>
+					<a href="switch.html">Switchs</a>
+					</li>
+					<li>
+					<a href="grid.html">Grids</a>
+					</li>
+					<li>
+					<a href="fontawesome.html">Fontawesome Icon</a>
+					</li>
+					<li>
+					<a href="typo.html">Typography</a>
+					</li>
+					</ul>
+					</li>
+					</ul>*@
+
+				</div>
+			</nav>
+		</header>
+		<!-- END HEADER MOBILE-->
+		<!-- MENU SIDEBAR-->
+		<aside class="menu-sidebar d-none d-lg-block">
+			<div class="logo" style="background-color:#b4d9d5">
+
+				<img alt="your logo" onclick="/Home/Index" src="~/images/Bankislami-Logo.png" style="height:80px;width:300px;padding:10px;margin-bottom:5px;" />
+
+			</div>
+			<div class="menu-sidebar__content js-scrollbar1" style="background-color:#c6d9ec">
+				<nav class="navbar-sidebar">
+
+					@*	<ul class="list-unstyled navbar__list">
+
+
+					<li>
+					<a class="side-menu" onclick="window.location.href='/Home/Index'" style="cursor:pointer;">Dashboard</a>
+					</li>
+					<li>
+					<a class="side-menu" asp-controller="TravelRequest" asp-action="Index">Travel Request</a>
+					</li>
+					<li>
+					<a asp-controller="TransportRequest" asp-action="Index">Transport Requests</a>
+					</li>
+
+					<li>
+					<a asp-controller="FieldVisitAuthorizationRequest" asp-action="Index">Field Visit Authorization<br />Requests</a>
+					</li>
+
+					<li>
+					<a asp-controller="FieldPassageAuthorizationRequest" asp-action="Index">Field Passage<br />Authorization Requests</a>
+					</li>
+
+					<li>
+					<a asp-controller="CharterSheetBooking" asp-action="Index">Charter Sheet Booking</a>
+					</li>
+
+
+					<li class="has-sub">
+					<a class="js-arrow" href="#">
+					<i class="fas fa-tachometer-alt"></i>E-Forms
+					</a>
+					<ul class="list-unstyled navbar__sub-list js-sub-list">
+					<li>
+					<a asp-controller="IctComputerequipmentrequest" asp-action="Index">Computer Equipment<br />Requests</a>
+					</li>
+					<li>
+					<a asp-controller="TelecomunicationDeviceRequest" asp-action="Index">Telecommunication<br />Device Requests</a>
+					</li>
+					<li>
+					<a asp-controller="UserAccountRequest" asp-action="Index">User Account Request</a>
+					</li>
+					<li>
+					<a asp-controller="Useraccountmodidficationdeletion" asp-action="Index">User Account Modifi<br />Deletion Requests</a>
+					</li>
+					<li>
+					<a asp-controller="IctChangeReq" asp-action="Index">Change Request</a>
+					</li>
+					<li>
+					<a asp-controller="ServerRoomPermit" asp-action="Index">Server Room Permit to<br />Work Requester Forms</a>
+					</li>
+					<li>
+					<a asp-controller="Lost_stolenIctEquipment" asp-action="Index">Lost or Stolen Equipment<br />Requests</a>
+					</li>
+					</ul>
+					</li>
+					<li class="has-sub" hidden="true">
+					<a class="js-arrow" href="#">
+					<i class="fas fa-tachometer-alt"></i>Finance e-Forms
+					</a>
+					<ul class="list-unstyled navbar__sub-list js-sub-list">
+					<li>
+					<a asp-controller="CashAdvanceRequest" asp-action="Index">Cash Advance Requests</a>
+					</li>
+					<li>
+					<a asp-controller="ExpenseClaimRequest" asp-action="Index">Expense Claim Requests</a>
+					</li>
+					</ul>
+					</li>
+					<li class="has-sub" hidden="true">
+					<a class="js-arrow" href="#" hidden="true">
+					<i class="fas fa-tachometer-alt"></i>Setup Forms
+					</a>
+					<ul class="list-unstyled navbar__sub-list js-sub-list">
+					<li>
+					<a asp-controller="DropDown" asp-action="Index">All DropDown</a>
+					</li>
+					<li>
+					<a asp-controller="DropDown" asp-action="EmployeeDropDownIndex">Department DropDown</a>
+					</li>
+					<li>
+					<a asp-controller="DropDown" asp-action="WBEDropDownIndex">WBE DropDown</a>
+					</li>
+					</ul>
+					</li>
+					</ul>*@
+
+					<div id="dynamic-menu"></div>
+
+				</nav>
+				<div style="position: fixed; bottom: 20px; left: 30px; ">
+					<a asp-controller="LoginModel" asp-action="Logout" style="margin-left:20px;">
+						<img alt="Logout" width="25px;" />  Logout
+					</a>
+				</div>
+
+			</div>
+
+		</aside>
+		<!-- END MENU SIDEBAR-->
+		<!-- PAGE CONTAINER-->
+		<div class="page-container">
+			<!-- HEADER DESKTOP-->
+			<header class="header-desktop">
+				<div class="section__content section__content--p30" style="background-color:#55cfc4">
+					<div class="container-fluid">
+						<div class="header-wrap">
+							<form style="padding: 20px;" class="form-header" action="" method="POST">
+								<h2 style="color:black">Demo Application</h2>
+								@* <input class="au-input au-input--xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />
+								<button class="au-btn--submit" type="submit">
+								<i class="zmdi zmdi-search"></i>
+								</button> *@
+
+							</form>
+							@* <h2 style="color:white;margin-right:-750px;font-size: xxx-large;">اَمرُوز</h2> *@
+							<div class="header-button">
+
+								<div class="noti-wrap">
+								</div>
+								<div class="account-wrap">
+
+									<div class="account-item clearfix js-item-menu">
+										<div class="image">
+											<img src="~/images/user.png" alt="John Doe" />
+										</div>
+										<div class="content">
+											<a class="js-acc-btn user-name-color" href="#">@Context.Session.GetString("Name")</a>
+										</div>
+										<div class="account-dropdown js-dropdown">
+											<div class="info clearfix">
+												<div class="image">
+													<a href="#">
+														<img src="~/images/user.png" alt="John Doe" />
+													</a>
+												</div>
+												<div class="content">
+													<h5 class="name">
+														<a href="#">@Context.Session.GetString("Name")</a>
+													</h5>
+													<span class="email">johndoe@example.com</span>
+												</div>
+											</div>
+											<div class="account-dropdown__body">
+												<div class="account-dropdown__item">
+													<a href="#">
+														<i class="zmdi zmdi-account"></i>Account
+													</a>
+												</div>
+												@* 	<div class="account-dropdown__item">
+													<a href="#">
+														<i class="zmdi zmdi-settings"></i>Setting
+													</a>
+												</div>
+												<div class="account-dropdown__item">
+													<a href="#">
+														<i class="zmdi zmdi-money-box"></i>Billing
+													</a>
+												</div> *@
+											</div>
+											<div class="account-dropdown__footer">
+
+												@*	<a class="side-menu" onclick="window.location.href='/Home/Index'" style="cursor:pointer;">Dashboard</a>*@
+												<a asp-controller="LoginModel" asp-action="Logout">
+													<i class="zmdi zmdi-power"></i>Logout
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</header>
+			<!-- HEADER DESKTOP-->
+			<!-- MAIN CONTENT-->
+			@* style="background:linear-gradient(to right, darkgrey 60%, lightgrey)" *@
+			<div class="main-content">
+				<div class="section__content section__content--p30">
+					<div class="container-fluid">
+						<div class="row">
+							@* <div class="col-md-6"> *@
+							<div class="container">
+
+								@RenderBody()
+
+							</div>
+
+
+
+
+							@* </div> *@
+
+
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="copyright">
+									<footer class="main-footer">
+										<p>Copyright © 2025 Mazen Pvt Ltd. All rights reserved. Template by <a href="https://www.mazen.com.pk/">Mazen Pvt Ltd</a>.</p>
+										<div class="float-right d-none d-sm-inline-block">
+										</div>
+
+									</footer>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END PAGE CONTAINER-->
+
+	</div>
+
+	<!-- Jquery JS-->
+	@* <script src="~/vendor/jquery-3.2.1.min.js"></script> *@
+	<!-- Bootstrap JS-->
+	<script src="~/vendor/bootstrap-4.1/popper.min.js"></script>
+	<script src="~/vendor/bootstrap-4.1/bootstrap.min.js"></script>
+
+	<!-- Vendor JS       -->
+	<script src="~/vendor/slick/slick.min.js">
+	</script>
+	<script src="~/vendor/wow/wow.min.js"></script>
+	<script src="~/vendor/animsition/animsition.min.js"></script>
+	<script src="~/vendor/bootstrap-progressbar/bootstrap-progressbar.min.js">
+	</script>
+	<script src="~/vendor/counter-up/jquery.waypoints.min.js"></script>
+	<script src="~/vendor/counter-up/jquery.counterup.min.js">
+	</script>
+	<script src="~/vendor/circle-progress/circle-progress.min.js"></script>
+	<script src="~/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+	<script src="~/vendor/chartjs/Chart.bundle.min.js"></script>
+	<script src="~/vendor/select2/select2.min.js">
+	</script>
+	@*<script>
+	$(document).ready(function () {
+	$.getJSON("/Home/GetMenu", function (flatData) {
+	const treeData = buildHierarchy(flatData, null);
+
+	$("#dynamic-menu").kendoTreeView({
+	dataSource: treeData,
+	dataTextField: "text",
+	select: function (e) {
+	const item = this.dataItem(e.node);
+	if (item.Navigate) {
+	window.location.href = item.Navigate;
+	}
+	}
+	});
+	});
+
+	function buildHierarchy(data, parentId) {
+	return data.filter(item => item.ParentID === parentId)
+	//return data.filter(x => (x.ParentID === parentId || (x.ParentID == null && parentId === "")))
+	.map(item => ({
+	id: item.MenuID,
+	text: item.Text,
+	Navigate: item.Navigate,
+	items: buildHierarchy(data, item.MenuID)
+	}));
+	}
+	});
+	</script>
+	*@
+	<script>
+
+		$(document).ready(function () {
+			$.getJSON("/Home/GetMenu", function (data) {
+				const menuTree = buildTree(data, null);
+				const html = renderMenu(menuTree);
+				$('#dynamic-menu').html(html);
+			});
+
+			function buildTree(data, parentId) {
+				return data.filter(x => x.ParentID === parentId)
+					.map(x => ({
+						...x,
+						children: buildTree(data, x.MenuID)
+					}));
+			}
+
+			function renderMenu(items) {
+				let html = '<ul class="list-unstyled navbar__list">';
+				items.forEach(item => {
+					if (item.children && item.children.length > 0) {
+						html += `
+						<li class="has-sub">
+							<a class="js-arrow" href="#">${item.Text}</a>
+							<ul class="list-unstyled navbar__sub-list js-sub-list">
+								${renderMenuItems(item.children)}
+							</ul>
+						</li>
+					`;
+					} else {
+						html += `
+						<li>
+								<a class="side-menu" href="${item.Navigate}">${item.Text}</a>
+
+						</li>
+					`;
+					}
+				});
+				html += '</ul>';
+				return html;
+			}
+			//<a class="side-menu" href="javascript:void(0);" data-url="${item.Navigate}">${item.Text}</a>
+
+
+			function renderMenuItems(children) {
+				return children.map(child =>
+					child.children && child.children.length > 0
+						? `
+						<li class="has-sub">
+							<a class="js-arrow" href="#">${child.Text}</a>
+							<ul class="list-unstyled navbar__sub-list js-sub-list">
+								${renderMenuItems(child.children)}
+							</ul>
+						</li>
+					`
+						: `<li><a class="side-menu" href="${child.Navigate}">${child.Text}</a></li>`
+				).join('');
+			}
+			//<a class="side-menu" href="javascript:void(0);" data-url="${child.Navigate}">${child.Text}</a>
+			$(document).on('click', '.side-menu', function (e) {
+				e.preventDefault();
+				const url = $(this).data('url');
+				if (url && url !== "#") {
+					e.preventDefault();
+				}
+			});
+			$(document).on('click', '.js-arrow', function (e) {
+				e.preventDefault(); // only for menu toggles
+				var $submenu = $(this).next('.js-sub-list');
+				$submenu.slideToggle();
+				$(this).parent().toggleClass('open');
+			});
+		});
+	</script>
+
+	<!-- Main JS-->
+	<script src="~/js/main.js"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+
+
+</body>
+
+</html>
+<!-- end document-->

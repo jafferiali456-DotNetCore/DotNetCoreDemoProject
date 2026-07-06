@@ -1,0 +1,33 @@
+﻿@using Kendo.Mvc.UI
+@{
+    string dialogId = ViewBag.DialogId ?? "autoDialog";
+    string title = ViewBag.Title;
+    string content = ViewBag.Content;
+    bool autoOpen = ViewBag.AutoOpen ?? false;
+    int width = ViewBag.Width ?? 400;
+}
+
+@if (!string.IsNullOrEmpty(title) || !string.IsNullOrEmpty(content))
+{
+    @(Html.Kendo().Dialog()
+            .Name(dialogId)
+            .Title(title)
+            .Content(content)
+            .Width(width)
+            .Modal(true)
+            .Visible(false)
+            .Actions(actions =>
+            {
+                actions.Add().Text("OK").Primary(true).Action("onDialogOk");
+            })
+        )
+
+    @if (autoOpen)
+        {
+            <script>
+                $(document).ready(function () {
+                    $("#@dialogId").data("kendoDialog").open();
+                });
+            </script>
+        }
+}

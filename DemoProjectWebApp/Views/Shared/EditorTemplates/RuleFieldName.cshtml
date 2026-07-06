@@ -1,0 +1,40 @@
+﻿@using Kendo.Mvc.UI
+
+@model string // Or the type of your foreign key
+
+@(Html.Kendo().DropDownListFor(m => m)
+    .OptionLabel("Select Action")
+    .DataTextField("Text")
+    .DataValueField("Value")
+    .BindTo((IEnumerable<SelectListItem>)ViewData["actions"])
+     .ValuePrimitive(true)         // sirf Value bind hoga model me
+    .Template("#= Text #")        // list me hamesha Text hi show hoga
+    .ValueTemplate("#= Text #")
+)
+
+
+@*     @(Html.Kendo().DropDownListFor(m => m)
+        .DataValueField("ValueSetItemCode")
+        .DataTextField("RefText1")
+        .DataSource(source => source
+            .Read(read => read.Action("GetServiceName", "SMSCharges", new { DropDownParametre = "GNL_MobileInternetUse" })) // Action to load data
+        )
+    )
+     @model int? *@
+
+@* @(Html.Kendo().DropDownListFor(m => m)
+    .OptionLabel("Select equipment")
+    .DataTextField("RefText1")
+    .DataValueField("ValueSetItemCode")
+    .AutoBind(true)
+    .Filter("contains")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Url(Url.Action("GetServiceName", "SMSCharges", new { DropDownParametre = "GNL_MobileInternetUse" }));
+        });
+    })
+) *@
+
+

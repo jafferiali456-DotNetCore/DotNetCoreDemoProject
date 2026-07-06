@@ -1,0 +1,192 @@
+﻿@using Kendo.Mvc.UI
+@model List<DynamicField>
+@addTagHelper *, Kendo.Mvc
+
+@{
+    ViewData["Title"] = "City";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_PopUpDialogBox")
+<div >
+    <h2 style="margin-top:-10px; margin-bottom:20px;" class="fw-semibold">City</h2>
+    @Html.Partial("_CommonDialog")
+    <div>
+        <button type="button" class="new-head fw-semibold" onclick="window.location.href='@Url.Action("Index", "City")'">
+            Add City
+        </button>
+    </div>    <!-- ================= GRID ================= -->
+    <kendo-grid name="grid" height="430" resizable="true">
+        <datasource type="DataSourceTagHelperType.Ajax" page-size="20" server-operation="false"
+                    on-error="error_handler">
+            <schema data="Data" total="Total">
+                <model id="Id">
+                    <fields>
+                        <field name="Id" type="number" editable="false"></field>
+                        <field name="Code" type="string"></field>
+                        <field name="Name" type="string"></field>
+                        <field name="Abbreviation" type="string"></field>
+                    </fields>
+                </model>
+            </schema>
+            <transport>
+                <read url="@Url.Action("View", "City")" />
+            </transport>
+        </datasource>
+
+        <columns>
+            <!-- Edit -->
+            <column template="<div class='tooltip-wrapper'>
+                                <a href='javascript:void(0);' onclick='openEdit(#=Id#)'>
+                                    <img src='/images/icon/pencil.png' style='width:19px; height:19px;' alt='Edit'/>
+                                </a>
+                                <span class='tooltip-text'>Edit Record</span>
+                              </div>"
+                    width="50"
+                    header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center; overflow: visible;" }' />
+
+            <!-- Delete -->
+            <column template="<div class='tooltip-wrapper' onclick='confirmRedirect(#=Id#)'>
+                                <a href='javascript:void(0);'>
+                                    <img src='/images/icon/delete.png' style='width:19px; height:19px;' alt='Delete'/>
+                                </a>
+                                <span class='tooltip-text'>Delete Record</span>
+                              </div>"
+                    width="50"
+                    header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center; overflow: visible;" }' />
+
+            <!-- View -->
+            <column template="<div class='tooltip-wrapper'>
+                                <a href='javascript:void(0);' onclick='openView(#=Id#)'>
+                                    <img src='/images/icon/file.png' style='width:19px; height:19px;' />
+                                </a>
+                                <span class='tooltip-text'>View Record</span>
+                              </div>"
+                    width="50"
+                    header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center; overflow: visible;" }' />
+
+            <!-- Data Columns -->
+            <column field="Code" width="200" title="City Code"
+                    header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }' />
+            <column field="Abbreviation" width="200" title="Abbreviation"
+                    header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }' />
+            <column field="Name" width="200" title="City Name"
+                    header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }' />
+        </columns>
+
+        <!-- ================= GRID SETTINGS ================= -->
+        <pageable always-visible="true" page-sizes="@new int[] { 10, 20, 100, 500 }"></pageable>
+        <toolbar>
+            <toolbar-button name="excel" title="Export to Excel"></toolbar-button>
+            <toolbar-button name="pdf" title="Export to PDF"></toolbar-button>
+        </toolbar>
+        <reorderable enabled="true" />
+        <sortable enabled="true" />
+        <scrollable enabled="true" />
+        <filterable enabled="true" />
+        <groupable enabled="true" />
+    </kendo-grid>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+    function openEdit(id) {
+        window.location.href = '/City/Index?id=' + id + '&mode=Edit';
+    }
+
+    function openView(id) {
+        window.location.href = '/City/Index?id=' + id + '&mode=View';
+    }
+
+    function confirmRedirect(id) {
+
+        var grid = $("#grid").data("kendoGrid");
+        var dataItem = grid.dataSource.get(id);
+
+        var deleteData = {
+            Id: id
+        };
+
+            $("<div></div>").kendoDialog({
+                width: "360px",
+                title: "Discard Confirmation",
+                closable: false,
+                modal: true,
+                content: "Are you sure you want to discard this record?",
+                actions: [
+                {
+                    text: "Yes",
+                    primary: true,
+                    action: function () {
+
+                        $.ajax({
+                            url: '@Url.Action("DiscardRecord", "City")',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(deleteData),
+                            success: function (result) {
+
+                                if (result.success) {
+                                    grid.dataSource.remove(dataItem);
+                                    grid.refresh();
+
+                                    $("<div></div>").kendoDialog({
+                                        width: "360px",
+                                        title: "Discarded",
+                                        content: "Record discarded successfully.",
+                                        actions: [{ text: "OK", primary: true }]
+                                    }).data("kendoDialog").open();
+                                }
+                                else {
+                                    $("<div></div>").kendoDialog({
+                                        width: "360px",
+                                        title: "Failed",
+                                        content: result.message || "Unable to discard record.",
+                                        actions: [{ text: "OK", primary: true }]
+                                    }).data("kendoDialog").open();
+                                }
+                            },
+                            error: function () {
+                                $("<div></div>").kendoDialog({
+                                    width: "360px",
+                                    title: "System Error",
+                                    content: "Something went wrong. Please try again.",
+                                    actions: [{ text: "OK", primary: true }]
+                                }).data("kendoDialog").open();
+                            }
+                        });
+
+                        return true;
+                    }
+                },
+                {
+                    text: "No",
+                    action: function () {
+                        return true;
+                    }
+                }
+            ],
+            close: function () {
+                this.destroy(); // ✅ important
+            }
+        }).data("kendoDialog").open();
+    }
+
+
+    function error_handler(e) {
+        var message = "Something went wrong.";
+        if(e.errors) {
+            if(typeof e.errors === "string") message = e.errors;
+            else $.each(e.errors, function(k,v){ if(v.errors) message = v.errors.join("\n"); });
+        } else if(e.xhr && e.xhr.responseJSON) {
+            message = e.xhr.responseJSON.error || e.xhr.responseJSON.message || message;
+        }
+        
+    }
+</script>

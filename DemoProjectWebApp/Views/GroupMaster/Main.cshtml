@@ -1,0 +1,123 @@
+@using Kendo.Mvc.UI
+@model List<DynamicField>
+@addTagHelper *, Kendo.Mvc
+@{
+    ViewData["Title"] = "GroupMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("_PopUpDialogBox")
+<div>
+    <h2 style="margin-top:-10px; margin-bottom:20px;" class="fw-semibold">Group</h2>
+    @Html.Partial("_CommonDialog")
+    <div>
+        <button type="button" class="new-head fw-semibold" onclick="window.location.href='@Url.Action("Index", "GroupMaster")'">
+            Add Group
+        </button>
+    </div>    <!-- ================= GRID ================= -->
+    <kendo-grid name="grid" height="430" resizable="true">
+        <datasource type="DataSourceTagHelperType.Ajax" page-size="20" server-operation="false"
+                    on-error="error_handler">
+            <schema data="Data" total="Total">
+                <model id="Id">
+                    <fields>
+                        <field name="Id" type="number" editable="false"></field>
+                    </fields>
+                </model>
+            </schema>
+            <transport>
+                <read url="@Url.Action("View", "GroupMaster")" />
+            </transport>
+        </datasource>
+        <columns>
+
+            <!-- Edit Button -->
+            <column template="<div class='tooltip-wrapper'><a href='javascript:void(0);' onclick='openEdit(#=Id#)'><img src='/images/icon/pencil.png' style='width:19px; height:19px;' alt='Edit'/></a><span class='tooltip-text'>Edit Record</span></div>"
+                    width="50" header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center; overflow: visible;" }' />
+
+            <!-- Delete Button -->
+            <column template="<div class='tooltip-wrapper' onclick='confirmRedirect(#=Id#)'><a href='javascript:void(0);'><img src='/images/icon/delete.png' style='width:19px; height:19px;' alt='Delete'/></a><span class='tooltip-text'>Delete Record</span></div>"
+                    width="50" header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center; overflow: visible;" }' />
+
+            <!-- View Button -->
+            <column template="<div class='tooltip-wrapper'><a href='javascript:void(0);' onclick='openView(#=Id#)'><img src='/images/icon/file.png' style='width:19px; height:19px;' /></a><span class='tooltip-text'>View Record</span></div>"
+                    width="50" header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center; overflow: visible;" }' />
+
+
+            <column field="GroupCode" width="200" title="Group Code" header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }' />
+            <column field="GroupName" width="200" title="Group Name" header-html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }'
+                    html-attributes='new Dictionary<string, object> { ["style"] = "text-align: center" }' />
+
+        </columns>
+        <pageable always-visible="true" page-sizes="@new int[] { 10, 20, 100, 500 }">
+        </pageable>
+        <toolbar>
+            <toolbar-button name="excel"></toolbar-button>
+            <toolbar-button name="pdf"></toolbar-button>
+        </toolbar>
+        <reorderable enabled="true" />
+        <sortable enabled="true" />
+        <scrollable enabled="true" />
+        <filterable enabled="true" />
+        <groupable enabled="true" />
+    </kendo-grid>
+
+</div>
+
+<script>
+    function openEdit(id) {
+        window.location.href = '/GroupMaster/Index?id=' + id + '&mode=Edit';
+    }
+    function openView(id) {
+        window.location.href = '/GroupMaster/Index?id=' + id + '&mode=View';
+    }
+    function confirmRedirect(id) {
+        $('<div></div>').kendoDialog({
+            width: '200px',
+            title: 'Discard Confirmation',
+            closable: false,
+            modal: true,
+            content: 'Are you sure you want to discard this record?',
+            actions: [
+                {
+                    text: 'Yes',
+                    primary: true,
+                    action: function () {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/GroupMaster/DiscardRecord',
+                            data: { Id: id, mode:'Delete' },
+                            success: function () {
+                                window.location.href = '/GroupMaster/Main';
+                            },
+                            error: function () {
+                                alert('Error discarding record.');
+                            }
+                        });
+                        return true;
+                    }
+                },
+                {
+                    text: 'No',
+                    action: function () { return true; }
+                }
+            ]
+        }).data('kendoDialog').open();
+    }
+
+    function error_handler(e) {
+        var message = 'Something went wrong.';
+        if(e.errors){
+            if(typeof e.errors === 'string') message = e.errors;
+            else $.each(e.errors, function(key, value){
+                if(value.errors) message = value.errors.join('\\n');
+            });
+        } else if(e.xhr && e.xhr.responseJSON) {
+            message = e.xhr.responseJSON.error || e.xhr.responseJSON.message || message;
+        }
+        alert(message);
+    }
+</script>

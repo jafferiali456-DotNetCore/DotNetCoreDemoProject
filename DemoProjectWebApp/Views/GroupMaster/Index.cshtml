@@ -1,0 +1,274 @@
+
+@using Kendo.Mvc.UI
+@model DemoProjectWebApp.Models.GroupMaster
+@addTagHelper *, Kendo.Mvc
+
+@{
+    ViewData["Title"] = "GroupMasterDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string mode = ViewBag.Mode?.ToString() ?? "Create";
+    string heading = mode == "Edit" ? $"Edit GroupMasterDetail" : $"Add GroupMasterDetail";
+    string buttonText = mode == "Edit" ? "Update" : "Save";
+    bool showButton = mode != "View";
+}
+@Html.Partial("_PopUpDialogBox")
+<div >
+    <div class="row justify-content-center">
+        <div class="col-xl-30 col-lg-14">
+            <div class="card border-0 shadow-sm">
+
+                <!-- ================= HEADER ================= -->
+                <div class="card-header bg-white border-bottom">
+                    <h4 class="mb-1 fw-semibold d-flex align-items-center">
+                        <img src="~/images/icon/registration.png" width="36" class="me-2" />
+                        @heading
+                    </h4>
+                    <small class="text-muted">Fill the required details carefully</small>
+                </div>
+
+                <!-- ================= BODY ================= -->
+                <div class="card-body">
+                    <form id="GroupMasterForm" method="post" asp-controller="GroupMaster" asp-action="Index">
+                        @Html.AntiForgeryToken()
+
+                        <!-- ================= BASIC DETAILS ================= -->
+                        <div class="form-section-tight">
+
+                            <h4 class="fw-semibold text-primary mb-4">
+                                Basic Details
+                            </h4>
+
+                            <div class="row gx-2 gy-4 mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="GroupCode" class="form-label fw-semibold">Group Code</label>
+                                    <kendo-numerictextbox for="GroupCode" style="width:100%" clear-button="true"></kendo-numerictextbox>
+                                    <span asp-validation-for="GroupCode" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="GroupName" class="form-label fw-semibold">Group Name</label>
+                                    <kendo-textbox for="GroupName" style="width:100%" clear-button="true"></kendo-textbox>
+                                    <span asp-validation-for="GroupName" class="text-danger"></span>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <!-- ================= HIDDEN FIELDS ================= -->
+                        @if (mode == "Edit" || mode == "View")
+                        {
+                            <input type="hidden" asp-for="Id" />
+                        }
+
+                        <input type="hidden" name="mode" value="@mode" />
+
+                        @(Html.Kendo().Grid(Model.DetailList)
+                        .Name("DetailList")
+                        .ToolBar(tools =>
+                        {
+                            if (mode != "View")
+                            {
+                                tools.Create().Text("Add");
+                            }
+                        })
+                        .Editable(editable =>
+                        {
+                            if (mode != "View")
+                            {
+                                editable.Mode(GridEditMode.InCell)
+                                        .CreateAt(GridInsertRowPosition.Bottom);
+                            }
+                            else
+                            {
+                                editable.Enabled(false);
+                            }
+                        })
+                        .Columns(columns =>
+                        {
+
+
+                            if (mode != "View")
+                            {
+                                columns.Template(@"
+                                    <div class='tooltip-wrapper' onclick='deleteQueue(#=Id#)'>
+                                        <img src='/images/icon/delete.png'
+                                        style='width:19px; height:19px;'
+                                        alt='Delete'/>
+                                    </div>
+                                ")
+                                .Width(50)
+                                .HeaderHtmlAttributes(new { style = "text-align: center" })
+                                .HtmlAttributes(new { style = "text-align: center; overflow: visible;" });
+                            }
+
+                            
+                            columns.Bound(p => p.AccountCode)
+                            .EditorTemplateName("COADropdown")
+                            .ClientTemplate("#= getMappingNameCOA(AccountCode) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].AccountCode' value='#= AccountCode #' />")
+                            .Title("Account").Width("100px");
+
+                            columns.Bound(p => p.LedgerCode)
+                            .EditorTemplateName("LedgerDropdown")
+                            .ClientTemplate("#= getMappingNameLedger(LedgerCode) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].LedgerCode' value='#= LedgerCode #' />")
+                            .Title("LedgerCode").Width("100px");
+                    
+                            columns.Bound(p => p.AccountType)
+                            .EditorTemplateName("ActionDropdown")
+                            .ClientTemplate("#= getMappingName(AccountType) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].AccountType' value='#= AccountType #' />")
+                            .Title("Account Type").Width("100px");
+
+
+                            columns.Bound(p => p.SourceBaseValue)
+                            .EditorTemplateName("SourceBaseDropdown")
+                            .ClientTemplate("#= getMappingNameSourceBaseVal(SourceBaseValue) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].SourceBaseValue' value='#= SourceBaseValue #' />")
+                            .Title("Source Base Value").Width("100px");
+
+                            columns.Bound(p => p.CalcType)
+                            .EditorTemplateName("CalcTypeDropdown")
+                            .ClientTemplate("#= getMappingNameCalcType(CalcType) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].CalcType' value='#= CalcType #' />")
+                            .Title("Calc Type").Width("100px");
+
+                            columns.Bound(p => p.Prorate)
+                            .EditorTemplateName("ProrateDropdown")
+                            .ClientTemplate("#= getMappingNameProrate(Prorate) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].Prorate' value='#= Prorate #' />")
+                            .Title("Pro Rate").Width("100px");
+
+                            columns.Bound(p => p.CalcImpact)
+                            .EditorTemplateName("CalcImpactDropdown")
+                            .ClientTemplate("#= getMappingNameCalcImpact(CalcImpact) #" +
+                            "<input type='hidden' name='DetailList[#= index(data)#].CalcImpact' value='#= CalcImpact #' />")
+                            .Title("Calc Impact").Width("100px");
+
+                        })
+                        .DataSource(dataSource => dataSource.Ajax()
+                        .Model(model =>
+                        {
+                            model.Id(p => p.Id);
+                            model.Field(p => p.Id).Editable(true).DefaultValue(0);
+                            model.Field(p => p.AccountCode).Editable(true);
+                            model.Field(p => p.AccountType).Editable(true);
+                            model.Field(p => p.LedgerCode).Editable(true);
+                            model.Field(p => p.CalcType).Editable(true);
+                    
+                        })
+                        .ServerOperation(false)
+                        .Batch(true)    
+                        .Events(events => events.Error("error_handler"))
+                        )
+                        )
+
+                        <!-- ================= FOOTER BUTTONS ================= -->
+                        @if (showButton)
+                        {
+                            <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-4">
+                                <small class="text-muted">
+                                    <span class="text-danger">*</span> Required fields
+                                </small>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button"
+                                            class="btn btn-light px-4"
+                                            onclick="history.back()">
+                                        Cancel
+                                    </button>
+                                    <button type="submit"
+                                            value="submit"
+                                            name="submitType"
+                                            onclick="handleSubmit(this)"
+                                            class="btn btn-primary px-4">
+                                        @buttonText
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (mode == "View")
+{
+    <script>
+        document.querySelectorAll('input, textarea, select, button')
+            .forEach(el => {
+                if (el.type !== "hidden") el.setAttribute("disabled", true);
+            });
+    </script>
+}
+
+<script>
+    function getMappingName(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["actions"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function getMappingNameLedger(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["Ledger"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function getMappingNameSourceBaseVal(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["SourceBaseVal"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function getMappingNameCalcType(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["CalcTypeVal"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function getMappingNameCalcImpact(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["CalcImpactVal"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function getMappingNameProrate(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["ProrateVal"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function getMappingNameCOA(value) {
+        var data = @Html.Raw(Json.Serialize(ViewData["coalistVal"]));
+        var item = data.find(x => x.Value === value);
+        return item ? item.Text : value;
+    }
+
+    function index(dataItem) {
+        var data = $("#DetailList").data("kendoGrid").dataSource.data();
+        return data.indexOf(dataItem);
+    }
+      function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+        }
+    }
+    function handleSubmit(button) {
+        button.innerHTML = '<span class="k-icon k-i-loading"></span> Processing...';
+        document.querySelectorAll("button[type='submit']").forEach(b => b.disabled = true);
+        setTimeout(() => button.form.submit(), 50);
+    }
+</script>

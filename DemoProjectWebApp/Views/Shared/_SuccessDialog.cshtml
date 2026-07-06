@@ -1,0 +1,163 @@
+﻿@using Kendo.Mvc.UI
+
+<style>
+
+    .custom-success-dialog {
+        padding: 20px 10px;
+        text-align: center;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .success-icon {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #e8fff1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid #22c55e;
+        box-shadow: 0 5px 15px rgba(34,197,94,0.2);
+    }
+
+        .success-icon span {
+            font-size: 45px;
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+    .success-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #16a34a;
+        margin-bottom: 10px;
+    }
+
+    .success-message {
+        font-size: 16px;
+        color: #444;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .success-date-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 14px;
+        text-align: left;
+        border: 1px solid #e2e8f0;
+    }
+
+        .success-date-box strong {
+            color: #111827;
+        }
+
+    .k-dialog-titlebar {
+        background: #16a34a !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    .k-dialog-buttongroup {
+        padding: 15px !important;
+    }
+
+    .k-dialog .k-button.k-primary {
+        background: #16a34a !important;
+        border-color: #16a34a !important;
+        min-width: 100px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+</style>
+
+
+@(Html.Kendo().Dialog()
+    .Name("successDialog")
+    .Title("Success")
+    .Content("<div id='successDialogContent'><h1>Hello</h1></div>")
+    .Width("450px")
+    .Modal(true)
+    .Visible(false)
+    .Actions(actions =>
+    {
+        actions.Add().Text("OK").Primary(true);
+    })
+)
+
+<script>
+
+    function showSuccessDialog(message) {
+
+        console.log("Function called");
+        console.log("Message:", message);
+
+        var currentDate = new Date();
+
+        console.log("Current Date:", currentDate);
+
+        var formattedDate =
+            currentDate.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }) + ' ' +
+            currentDate.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+        console.log("Formatted Date:", formattedDate);
+
+        var html = `
+            <div style="padding:10px 0; text-align:center;">
+
+                <div style="font-size:50px; color:green;">
+                    ✓
+                </div>
+
+                <p style="margin:15px 0; font-size:16px;">
+                    ${message}
+                </p>
+
+                <ul style="list-style:none; padding:0; text-align:left;">
+
+                    <li>
+                        <strong>Created On:</strong>
+                        ${formattedDate}
+                    </li>
+
+                </ul>
+
+            </div>
+        `;
+
+        console.log("Generated HTML:", html);
+
+        console.log("Setting HTML into #successDialogContent");
+
+        $("#successDialogContent").html(html);
+
+        console.log("Getting Kendo Dialog");
+
+        var dialog = $("#successDialog")
+            .data("kendoDialog");
+
+        console.log("Dialog Object:", dialog);
+
+        if (dialog) {
+
+            console.log("Opening dialog");
+
+            dialog.open();
+
+        } else {
+
+            console.error("Kendo Dialog not found!");
+
+        }
+    }
+
+</script>
